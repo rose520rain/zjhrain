@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录界面</title>
+    <style>
+        body {
+            background-color: lightblue; /* 浅蓝色背景 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            padding: 20px;
+            border: 1px solid #ccc; /* 方框边框 */
+            border-radius: 5px;
+            background-color: #fff; /* 白色背景 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+            width: 300px; /* 限制登录容器宽度 */
+        }
+        .form-group {
+            margin-bottom: 15px; /* 输入框之间的间距 */
+        }
+        .form-group label {
+            display: block; /* 使标签独占一行 */
+            margin-bottom: 5px; /* 标签与输入框之间的间距 */
+        }
+        .form-group input {
+            width: 100%; /* 输入框宽度占满父元素 */
+        }
+        /* 其他样式保持不变 */
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <form id="loginForm" onsubmit="return validateForm(event)">
+        <div class="form-group">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <input type="submit" value="登录" id="loginButton">
+        <p id="message"></p>
+    </form>
+</div>
+
+<script>
+    // 假设正确的用户名和密码
+    const correctUsername = "rose520rain";
+    const correctPassword = "2010520";
+    let attemptCount = 0;
+    let timerId = null; // 用于存储定时器ID
+
+    function validateForm(event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        if (attemptCount >= 3 && timerId) {
+            // 如果尝试次数超过3次且仍在锁定状态，则不执行验证
+            return;
+        }
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const messageElement = document.getElementById('message');
+
+        if (username === correctUsername && password === correctPassword) {
+            messageElement.textContent = "账号和密码正确";
+            messageElement.style.color = "green";
+            // 这里可以添加跳转到其他页面的代码
+        } else {
+            attemptCount++;
+
+            if (attemptCount >= 3) {
+                // 锁定输入框
+                document.getElementById('loginForm').style.pointerEvents = "none";
+                document.getElementById('loginForm').style.opacity = "0.6";
+                messageElement.textContent = "您已尝试3次，账号被锁定。请稍后再试。";
+                messageElement.style.color = "red";
+
+                // 设置30秒后解锁
+                timerId = setTimeout(() => {
+                    document.getElementById('loginForm').style.pointerEvents = "auto";
+                    document.getElementById('loginForm').style.opacity = "1";
+                    messageElement.textContent = "";
+                    attemptCount = 0; // 重置尝试次数
+                }, 30000); // 30秒后执行
+            } else {
+                messageElement.textContent = "请重新检查账号或密码";
+                messageElement.style.color = "red";
+                // 清空输入框
+                document.getElementById('username').value = "";
+                document.getElementById('password').value = "";
+            }
+        }
+    }
+</script>
+</body>
+</html>
